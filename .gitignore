@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment variables / secrets
+.env
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# Django local database
+db.sqlite3
+
+# Static files generated during deployment
+staticfiles/
