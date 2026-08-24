@@ -77,3 +77,66 @@ main {
     color: var(--white);
     text-align: center;
 }
+/* Homepage hero */
+
+.hero {
+    min-height: 620px;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(14, 48, 32, 0.82) 0%,
+            rgba(14, 48, 32, 0.55) 45%,
+            rgba(14, 48, 32, 0.08) 75%
+        ),
+        url("../backgrounds/hero-background.jpg") center / cover no-repeat;
+    display: flex;
+    align-items: center;
+}
+
+.hero-overlay {
+    width: min(1200px, 92%);
+    margin: 0 auto;
+}
+
+.hero-content {
+    max-width: 620px;
+    padding: 5rem 0;
+    color: var(--white);
+}
+
+.hero-kicker {
+    margin: 0 0 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.hero h1 {
+    margin: 0;
+    font-size: clamp(2.7rem, 6vw, 5rem);
+    line-height: 1;
+    max-width: 700px;
+}
+
+.hero-text {
+    margin: 1.5rem 0 2rem;
+    max-width: 560px;
+    font-size: 1.2rem;
+    line-height: 1.6;
+}
+
+.primary-button {
+    display: inline-block;
+    padding: 0.95rem 1.5rem;
+    border-radius: 8px;
+    background-color: var(--leaf-green);
+    color: var(--white);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.primary-button:hover,
+.primary-button:focus {
+    background-color: var(--forest-green);
+}
