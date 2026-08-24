@@ -140,3 +140,85 @@ main {
 .primary-button:focus {
     background-color: var(--forest-green);
 }
+/* Report, Protect and Monitor section */
+
+.process-section {
+    padding: 5rem 0;
+    background-color: var(--cream);
+}
+
+.section-container {
+    width: min(1200px, 92%);
+    margin: 0 auto;
+}
+
+.section-heading {
+    max-width: 700px;
+    margin: 0 auto 3rem;
+    text-align: center;
+}
+
+.section-kicker {
+    margin-bottom: 0.75rem;
+    color: var(--leaf-green);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.section-heading h2 {
+    margin: 0 0 1rem;
+    color: var(--forest-green);
+    font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.section-heading > p:last-child {
+    margin: 0;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.process-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.process-card {
+    padding: 2.5rem 2rem;
+    background-color: var(--white);
+    border: 1px solid var(--light-green);
+    border-radius: 14px;
+    text-align: center;
+}
+
+.process-icon {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 1.5rem;
+    object-fit: contain;
+}
+
+.process-card h3 {
+    margin: 0 0 1rem;
+    color: var(--forest-green);
+    font-size: 1.5rem;
+}
+
+.process-card p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* Responsive process cards */
+
+@media (max-width: 768px) {
+    .process-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .process-section {
+        padding: 3.5rem 0;
+    }
+}
