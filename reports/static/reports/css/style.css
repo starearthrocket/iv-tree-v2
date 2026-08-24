@@ -222,3 +222,75 @@ main {
         padding: 3.5rem 0;
     }
 }
+/* Recent tree reports section */
+
+.recent-reports-section {
+    padding: 5rem 0;
+    background-color: var(--white);
+}
+
+.reports-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.report-card {
+    padding: 2rem;
+    background-color: var(--cream);
+    border: 1px solid var(--light-green);
+    border-radius: 14px;
+}
+
+.report-status {
+    display: inline-block;
+    margin-bottom: 1rem;
+    padding: 0.4rem 0.8rem;
+    background-color: var(--light-green);
+    color: var(--forest-green);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.report-card h3 {
+    margin: 0 0 1rem;
+    color: var(--forest-green);
+    font-size: 1.4rem;
+}
+
+.report-card p {
+    line-height: 1.6;
+}
+
+.report-date {
+    margin-top: 1.5rem;
+    color: var(--leaf-green);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.empty-reports {
+    grid-column: 1 / -1;
+    padding: 3rem;
+    background-color: var(--cream);
+    border: 1px solid var(--light-green);
+    border-radius: 14px;
+    text-align: center;
+}
+
+.empty-reports h3 {
+    color: var(--forest-green);
+}
+
+/* Responsive recent reports */
+
+@media (max-width: 768px) {
+    .reports-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .recent-reports-section {
+        padding: 3.5rem 0;
+    }
+}

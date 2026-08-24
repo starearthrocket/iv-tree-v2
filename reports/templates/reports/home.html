@@ -80,4 +80,53 @@
     </div>
 </section>
 
+<!-- Recent tree reports section -->
+<section class="recent-reports-section">
+    <div class="section-container">
+
+        <div class="section-heading">
+            <p class="section-kicker">Community Reports</p>
+            <h2>Recent Tree Reports</h2>
+            <p>
+                View recently reported trees and follow their
+                protection and monitoring progress.
+            </p>
+        </div>
+
+        <div class="reports-grid">
+            {% for report in recent_reports %}
+
+                <article class="report-card">
+                    <div class="report-card-content">
+
+                        <span class="report-status">
+                            {{ report.get_status_display }}
+                        </span>
+
+                        <h3>{{ report.location }}</h3>
+
+                        <p>{{ report.description|truncatewords:20 }}</p>
+
+                        <p class="report-date">
+                            Reported {{ report.date_reported|date:"j F Y" }}
+                        </p>
+
+                    </div>
+                </article>
+
+            {% empty %}
+
+                <div class="empty-reports">
+                    <h3>No tree reports yet</h3>
+                    <p>
+                        Be the first to report a tree affected by invasive ivy.
+                    </p>
+                </div>
+
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
 {% endblock %}
