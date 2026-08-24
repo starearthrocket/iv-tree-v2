@@ -29,3 +29,30 @@ class TreeReport(models.Model):
 
     def __str__(self):
         return self.location
+
+
+class ProgressUpdate(models.Model):
+    """
+    Stores progress updates linked to an individual tree report.
+    """
+
+    tree_report = models.ForeignKey(
+        TreeReport,
+        on_delete=models.CASCADE,
+        related_name="progress_updates",
+    )
+    notes = models.TextField()
+    image = models.ImageField(
+        upload_to="progress_updates/",
+        blank=True,
+        null=True,
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=TreeReport.STATUS_CHOICES,
+        default="monitoring",
+    )
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Update for {self.tree_report.location}"
