@@ -1,0 +1,31 @@
+{% extends "reports/base.html" %}
+
+{% block title %}Edit {{ report.location }} | I-V Tree{% endblock %}
+
+{% block content %}
+
+<section class="report-form-section">
+    <div class="section-container">
+
+        <div class="section-heading">
+            <p class="section-kicker">Update Tree Report</p>
+            <h1>Edit Report</h1>
+            <p>
+                Update the details for {{ report.location }}.
+            </p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit" class="primary-button">
+                Save Changes
+            </button>
+        </form>
+
+    </div>
+</section>
+
+{% endblock %}

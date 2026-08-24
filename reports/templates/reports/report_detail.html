@@ -1,0 +1,59 @@
+{% extends "reports/base.html" %}
+
+{% block title %}{{ report.location }} | I-V Tree{% endblock %}
+
+{% block content %}
+
+<section class="report-detail-section">
+    <div class="section-container">
+
+        <div class="section-heading">
+            <p class="section-kicker">Tree Report</p>
+            <h1>{{ report.location }}</h1>
+            <p>
+                Reported {{ report.date_reported|date:"j F Y" }}
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<!-- Individual tree report details -->
+<article class="report-detail-card">
+
+    <span class="report-status">
+        {{ report.get_status_display }}
+    </span>
+
+    <p>
+        {{ report.description }}
+    </p>
+
+    {% if report.image %}
+        <img
+            src="{{ report.image.url }}"
+            alt="Photo for tree report at {{ report.location }}"
+            class="report-detail-image"
+        >
+    {% else %}
+        <p class="report-image-placeholder">
+            No image has been uploaded for this report.
+        </p>
+
+
+        {% endif %}
+
+    <!-- Report actions -->
+    <div class="report-actions">
+        <a href="{% url 'report_edit' report.pk %}" class="primary-button">
+           Edit Report
+        </a>
+
+        <a href="{% url 'report_delete' report.pk %}" class="delete-button">
+           Delete Report
+        </a>
+    </div>
+
+</article>
+
+{% endblock %}

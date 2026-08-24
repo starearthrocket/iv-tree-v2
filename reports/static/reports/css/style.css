@@ -392,3 +392,97 @@ main {
     color: var(--forest-green);
     border: 1px solid var(--light-green);
 }
+
+/* Individual report detail page */
+
+.report-detail-section {
+    padding: 4rem 0;
+}
+
+.report-detail-card {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2.5rem;
+    background-color: var(--white);
+    border: 1px solid var(--light-green);
+    border-radius: 14px;
+}
+
+.report-detail-card > p {
+    line-height: 1.6;
+}
+
+.report-detail-image {
+    display: block;
+    width: 100%;
+    max-height: 500px;
+    margin-top: 2rem;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.report-image-placeholder {
+    margin-top: 2rem;
+    padding: 2rem;
+    background-color: var(--cream);
+    border-radius: 10px;
+    text-align: center;
+}
+/* Report action buttons */
+
+.report-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    align-items: center;
+}
+
+.delete-button {
+    display: inline-block;
+    padding: 0.95rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #9b3d36;
+    color: var(--white);
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.delete-button:hover,
+.delete-button:focus {
+    background-color: #762f2a;
+}
+
+/* Report card links */
+
+.report-link {
+    display: inline-block;
+    margin-top: 0.75rem;
+    color: var(--forest-green);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.report-link:hover,
+.report-link:focus {
+    color: var(--leaf-green);
+    text-decoration: underline;
+}
+
+/* Align delete confirmation buttons */
+
+.report-form-section form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.report-form-section .delete-button,
+.report-form-section .primary-button {
+    margin: 0;
+    line-height: 1.2;
+}

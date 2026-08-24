@@ -1,0 +1,59 @@
+{% extends "reports/base.html" %}
+
+{% block title %}Tree Reports | I-V Tree{% endblock %}
+
+{% block content %}
+
+<section class="reports-page">
+    <div class="section-container">
+
+        <div class="section-heading">
+            <p class="section-kicker">Community Reports</p>
+            <h1>Tree Reports</h1>
+            <p>
+                View trees reported by the I-V Tree community
+                and follow their current status.
+            </p>
+        </div>
+
+        <div class="reports-grid">
+    {% for report in reports %}
+
+        <article class="report-card">
+            <div class="report-card-content">
+
+                <span class="report-status">
+                    {{ report.get_status_display }}
+                </span>
+
+                <h2>{{ report.location }}</h2>
+
+                <p>{{ report.description|truncatewords:30 }}</p>
+
+                <p class="report-date">
+                    Reported {{ report.date_reported|date:"j F Y" }}
+                </p>
+
+                <a href="{% url 'report_detail' report.pk %}" class="report-link">
+                   View Report
+                </a>
+
+            </div>
+        </article>
+
+    {% empty %}
+
+        <div class="empty-reports">
+            <h2>No tree reports yet</h2>
+            <p>
+                Be the first to report a tree affected by invasive ivy.
+            </p>
+        </div>
+
+    {% endfor %}
+</div>
+
+    </div>
+</section>
+
+{% endblock %}

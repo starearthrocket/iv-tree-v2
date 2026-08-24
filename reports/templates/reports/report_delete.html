@@ -1,0 +1,35 @@
+{% extends "reports/base.html" %}
+
+{% block title %}Delete {{ report.location }} | I-V Tree{% endblock %}
+
+{% block content %}
+
+<section class="report-form-section">
+    <div class="section-container">
+
+        <div class="section-heading">
+            <p class="section-kicker">Delete Tree Report</p>
+            <h1>Delete Report</h1>
+            <p>
+                Are you sure you want to delete the report for
+                {{ report.location }}?
+            </p>
+        </div>
+
+        <!-- Delete confirmation form -->
+        <form method="post">
+            {% csrf_token %}
+
+            <button type="submit" class="delete-button">
+                Yes, Delete Report
+            </button>
+
+            <a href="{% url 'report_detail' report.pk %}" class="primary-button">
+                Cancel
+            </a>
+        </form>
+
+    </div>
+</section>
+
+{% endblock %}
