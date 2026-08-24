@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import ProgressUpdate, TreeReport
+
+
+admin.site.register(TreeReport)
+admin.site.register(ProgressUpdate)
