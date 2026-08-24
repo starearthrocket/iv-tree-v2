@@ -294,3 +294,101 @@ main {
         padding: 3.5rem 0;
     }
 }
+/* Prototype tree reports map */
+
+.map-section {
+    padding: 5rem 0;
+    background-color: var(--cream);
+}
+
+.map-container {
+    overflow: hidden;
+    border: 1px solid var(--light-green);
+    border-radius: 14px;
+    background-color: var(--white);
+}
+
+.reports-map {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.map-note {
+    max-width: 800px;
+    margin: 1rem auto 0;
+    color: var(--leaf-green);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .map-section {
+        padding: 3.5rem 0;
+    }
+}
+/* Prototype map markers */
+
+.map-container {
+    position: relative;
+}
+
+.map-marker {
+    position: absolute;
+    width: 44px;
+    height: 58px;
+    transform: translate(-50%, -100%);
+    z-index: 5;
+}
+
+.map-marker img {
+    display: block;
+    width: 44px;
+    height: 58px;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+/* Prototype marker positions */
+
+.marker-one {
+    top: 52%;
+    left: 36%;
+}
+
+.marker-two {
+    top: 58%;
+    left: 59%;
+}
+
+.marker-three {
+    top: 39%;
+    left: 72%;
+}
+
+@media (max-width: 768px) {
+    .map-marker,
+    .map-marker img {
+        width: 28px;
+        height: 38px;
+    }
+}
+/* Success and feedback messages */
+
+.messages {
+    width: min(1200px, 92%);
+    margin: 1rem auto 0;
+}
+
+.message {
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.message.success {
+    background-color: #e4f1e6;
+    color: var(--forest-green);
+    border: 1px solid var(--light-green);
+}

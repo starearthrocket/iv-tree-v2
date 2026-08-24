@@ -1,6 +1,8 @@
-from django.shortcuts import render
+from django.contrib import messages
+from django.shortcuts import redirect, render
 
 from .models import TreeReport
+from .forms import TreeReportForm
 
 
 def home(request):
@@ -14,3 +16,23 @@ def home(request):
     }
 
     return render(request, "reports/home.html", context)
+
+def report_tree(request):
+    """Display and process the tree report form."""
+
+    if request.method == "POST":
+        form = TreeReportForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Tree report submitted successfully.")
+            return redirect("home")
+
+    else:
+        form = TreeReportForm()
+
+    return render(
+        request,
+        "reports/report_tree.html",
+        {"form": form},
+    )

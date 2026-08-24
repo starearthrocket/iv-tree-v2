@@ -128,5 +128,55 @@
 
     </div>
 </section>
+<!-- Prototype tree reports map section -->
+<section class="map-section">
+    <div class="section-container">
+
+        <div class="section-heading">
+            <p class="section-kicker">Report Locations</p>
+            <h2>Tree Reports Map</h2>
+            <p>
+                Explore a prototype visualisation of reported trees
+                across Worcestershire.
+            </p>
+        </div>
+
+        <div class="map-container">
+    <img
+        src="{% static 'reports/images/reports-map.jpg' %}"
+        alt="Prototype map visualisation showing approximate tree report locations across Worcestershire"
+        class="reports-map"
+    >
+
+    <!-- Prototype report markers -->
+    <div class="map-marker marker-one reported">
+        <img
+            src="{% static 'reports/images/map-marker.png' %}"
+            alt=""
+        >
+    </div>
+
+    <div class="map-marker marker-two action-needed">
+        <img
+            src="{% static 'reports/images/map-marker.png' %}"
+            alt=""
+        >
+    </div>
+
+    <div class="map-marker marker-three monitoring">
+        <img
+            src="{% static 'reports/images/map-marker.png' %}"
+            alt=""
+        >
+    </div>
+    </div>
+
+        <p class="map-note">
+            This map is a prototype visualisation. Marker positions are
+            approximate and do not represent exact geographic locations.
+        </p>
+
+    </div>
+</section>
 
 {% endblock %}

@@ -1,0 +1,30 @@
+{% extends "reports/base.html" %}
+
+{% block title %}Report a Tree | I-V Tree{% endblock %}
+
+{% block content %}
+
+<section class="report-form-section">
+    <div class="section-container">
+        <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit" class="primary-button">
+        Submit Report
+    </button>
+</form>
+
+        <div class="section-heading">
+            <p class="section-kicker">Tree Report</p>
+            <h1>Report a Tree</h1>
+            <p>
+                Tell us about a tree affected by invasive ivy.
+            </p>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
