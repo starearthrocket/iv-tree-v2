@@ -1,3 +1,8 @@
 from django.shortcuts import render
 
-# Create your views here.
+
+def home(request):
+    """
+    Display the I-V Tree homepage.
+    """
+    return render(request, "reports/home.html")

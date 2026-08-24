@@ -1,0 +1,79 @@
+/* I-V Tree Project 3 - Base Styles */
+
+:root {
+    --forest-green: #163f2b;
+    --leaf-green: #4f7d55;
+    --light-green: #dce8d8;
+    --cream: #f7f4e8;
+    --white: #ffffff;
+    --text-dark: #1f2d24;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--cream);
+    color: var(--text-dark);
+}
+
+/* Header and navigation */
+
+.site-header {
+    background-color: var(--white);
+    border-bottom: 1px solid var(--light-green);
+}
+
+.nav-container {
+    width: min(1200px, 92%);
+    margin: 0 auto;
+    min-height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.site-logo {
+    display: block;
+    width: 150px;
+    height: auto;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.nav-links a {
+    color: var(--forest-green);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.nav-links a:hover,
+.nav-links a:focus {
+    text-decoration: underline;
+}
+
+/* Main content */
+
+main {
+    min-height: 70vh;
+}
+
+/* Footer */
+
+.site-footer {
+    padding: 2rem;
+    background-color: var(--forest-green);
+    color: var(--white);
+    text-align: center;
+}

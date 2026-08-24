@@ -1,0 +1,54 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}I-V Tree{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'reports/css/style.css' %}">
+</head>
+
+<body>
+
+    <!-- Main site header and navigation -->
+    <header class="site-header">
+        <div class="nav-container">
+
+            <a href="/" class="logo-link" aria-label="I-V Tree home">
+                <img
+                    src="{% static 'reports/images/iv-tree-logo.png' %}"
+                    alt="I-V Tree logo"
+                    class="site-logo"
+                >
+            </a>
+
+            <nav aria-label="Main navigation">
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="#">Report a Tree</a></li>
+                    <li><a href="#">Reports</a></li>
+                    <li><a href="#">About</a></li>
+                </ul>
+            </nav>
+
+        </div>
+    </header>
+
+    <!-- Page-specific content will appear here -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Site footer -->
+    <footer class="site-footer">
+        <p>&copy; 2026 I-V Tree. Protecting trees together.</p>
+    </footer>
+
+</body>
+
+</html>
