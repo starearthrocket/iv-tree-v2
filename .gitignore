@@ -22,3 +22,6 @@ db.sqlite3
 
 # Static files generated during deployment
 staticfiles/
+
+# User-uploaded media
+media/
