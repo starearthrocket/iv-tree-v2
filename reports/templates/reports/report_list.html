@@ -16,42 +16,83 @@
             </p>
         </div>
 
-        <div class="reports-grid">
-    {% for report in reports %}
+        <!-- Search and filter tree reports -->
+        <form method="get" class="report-search-form">
 
-        <article class="report-card">
-            <div class="report-card-content">
+            <label for="report-search">Search reports by location</label>
 
-                <span class="report-status">
-                    {{ report.get_status_display }}
-                </span>
+            <input
+                type="search"
+                id="report-search"
+                name="search"
+                value="{{ search_query|default:'' }}"
+                placeholder="e.g. Bewdley"
+            >
 
-                <h2>{{ report.location }}</h2>
+            <label for="status-filter">Filter by status</label>
 
-                <p>{{ report.description|truncatewords:30 }}</p>
+            <select id="status-filter" name="status">
+                <option value="">All statuses</option>
 
-                <p class="report-date">
-                    Reported {{ report.date_reported|date:"j F Y" }}
-                </p>
+                {% for value, label in status_choices %}
+                    <option
+                        value="{{ value }}"
+                        {% if status_filter == value %}selected{% endif %}
+                    >
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
 
-                <a href="{% url 'report_detail' report.pk %}" class="report-link">
-                   View Report
+            <button type="submit" class="primary-button">
+                Search / Filter
+            </button>
+
+            {% if search_query or status_filter %}
+                <a href="{% url 'report_list' %}" class="report-link">
+                    Clear Filters
                 </a>
+            {% endif %}
 
-            </div>
-        </article>
+        </form>
 
-    {% empty %}
+        <!-- All submitted tree reports -->
+        <div class="reports-grid">
+            {% for report in reports %}
 
-        <div class="empty-reports">
-            <h2>No tree reports yet</h2>
-            <p>
-                Be the first to report a tree affected by invasive ivy.
-            </p>
+                <article class="report-card">
+                    <div class="report-card-content">
+
+                        <span class="report-status">
+                            {{ report.get_status_display }}
+                        </span>
+
+                        <h2>{{ report.location }}</h2>
+
+                        <p>{{ report.description|truncatewords:30 }}</p>
+
+                        <p class="report-date">
+                            Reported {{ report.date_reported|date:"j F Y" }}
+                        </p>
+
+                        <a href="{% url 'report_detail' report.pk %}" class="report-link">
+                            View Report
+                        </a>
+
+                    </div>
+                </article>
+
+            {% empty %}
+
+                <div class="empty-reports">
+                    <h2>No tree reports found</h2>
+                    <p>
+                        Try changing your search or status filter.
+                    </p>
+                </div>
+
+            {% endfor %}
         </div>
-
-    {% endfor %}
-</div>
 
     </div>
 </section>

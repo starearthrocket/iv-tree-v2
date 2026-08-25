@@ -3,6 +3,7 @@ from django.shortcuts import redirect, render
 
 from .models import TreeReport
 from .forms import ProgressUpdateForm, TreeReportForm
+from django.db.models import Q
 
 
 def home(request):
@@ -38,13 +39,29 @@ def report_tree(request):
     )
 
 def report_list(request):
-    """Display all submitted tree reports."""
+    """Display, search and filter submitted tree reports."""
     reports = TreeReport.objects.order_by("-date_reported")
+
+    search_query = request.GET.get("search")
+    status_filter = request.GET.get("status")
+
+    if search_query:
+        reports = reports.filter(
+            Q(location__icontains=search_query)
+            | Q(description__icontains=search_query)
+        )
+    if status_filter:
+        reports = reports.filter(status=status_filter)
 
     return render(
         request,
         "reports/report_list.html",
-        {"reports": reports},
+        {
+            "reports": reports,
+            "search_query": search_query,
+            "status_filter": status_filter,
+            "status_choices": TreeReport.STATUS_CHOICES,
+        },
     )
 
 def report_detail(request, pk):
