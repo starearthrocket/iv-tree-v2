@@ -10,4 +10,9 @@ urlpatterns = [
     path("reports/<int:pk>/", views.report_detail, name="report_detail"),
     path("reports/<int:pk>/edit/", views.report_edit, name="report_edit"),
     path("reports/<int:pk>/delete/", views.report_delete, name="report_delete"),
+    path(
+    "reports/<int:pk>/update/",
+    views.progress_update_create,
+    name="progress_update_create",
+),
 ]

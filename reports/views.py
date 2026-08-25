@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 
 from .models import TreeReport
-from .forms import TreeReportForm
+from .forms import ProgressUpdateForm, TreeReportForm
 
 
 def home(request):
@@ -97,4 +97,31 @@ def report_delete(request, pk):
         request,
         "reports/report_delete.html",
         {"report": report},
+    )
+
+def progress_update_create(request, pk):
+    """Add a progress update to an existing tree report."""
+    report = TreeReport.objects.get(pk=pk)
+
+    if request.method == "POST":
+        form = ProgressUpdateForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            update = form.save(commit=False)
+            update.tree_report = report
+            update.save()
+
+            messages.success(request, "Progress update added successfully.")
+            return redirect("report_detail", pk=report.pk)
+
+    else:
+        form = ProgressUpdateForm()
+
+    return render(
+        request,
+        "reports/progress_update_form.html",
+        {
+            "form": form,
+            "report": report,
+        },
     )

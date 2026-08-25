@@ -49,11 +49,58 @@
            Edit Report
         </a>
 
+        <a href="{% url 'progress_update_create' report.pk %}" class="primary-button">
+           Add Progress Update
+        </a>
+
         <a href="{% url 'report_delete' report.pk %}" class="delete-button">
            Delete Report
         </a>
     </div>
 
 </article>
+
+<!-- Progress updates for this tree report -->
+<section class="progress-updates">
+    <div class="section-container">
+
+        <div class="section-heading">
+            <p class="section-kicker">Tree Progress</p>
+            <h2>Progress Updates</h2>
+        </div>
+
+        {% for update in report.progress_updates.all %}
+            <article class="progress-update-card">
+
+                <span class="report-status">
+                    {{ update.get_status_display }}
+                </span>
+
+                <p>
+                    {{ update.notes }}
+                </p>
+
+                <p class="report-date">
+                    Updated {{ update.date_added|date:"j F Y" }}
+                </p>
+
+                {% if update.image %}
+                    <img
+                        src="{{ update.image.url }}"
+                        alt="Progress update for {{ report.location }}"
+                        class="report-detail-image"
+                    >
+                {% endif %}
+
+            </article>
+
+        {% empty %}
+            <p class="report-image-placeholder">
+                No progress updates have been added yet.
+            </p>
+        {% endfor %}
+
+    </div>
+</section>
 
 {% endblock %}

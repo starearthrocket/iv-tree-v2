@@ -1,0 +1,33 @@
+{% extends "reports/base.html" %}
+
+{% block title %}Add Progress Update | I-V Tree{% endblock %}
+
+{% block content %}
+
+<section class="report-form-section">
+    <div class="section-container">
+
+        <div class="section-heading">
+            <p class="section-kicker">Monitor Tree</p>
+            <h1>Add Progress Update</h1>
+            <p>
+                Add an update for the tree reported at
+                {{ report.location }}.
+            </p>
+        </div>
+
+        <!-- Progress update form -->
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit" class="primary-button">
+                Add Update
+            </button>
+        </form>
+
+    </div>
+</section>
+
+{% endblock %}
