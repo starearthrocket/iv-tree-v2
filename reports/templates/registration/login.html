@@ -4,17 +4,110 @@
 
 {% block content %}
 
-<section class="form-section">
-    <h1>Login</h1>
+<section class="report-form-section">
+    <div class="section-container">
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
+        <div class="section-heading">
+            <p class="section-kicker">Welcome Back</p>
 
-        <button type="submit" class="primary-button">
-            Login
-        </button>
-    </form>
+            <h1>Login</h1>
+
+            <p>
+                Log in to report trees, add progress updates
+                and manage your own contributions.
+            </p>
+        </div>
+
+        <div class="form-card">
+
+            <div class="form-intro">
+                <h2>Your Account</h2>
+
+                <p>
+                    Enter your username and password to continue
+                    to I-V Tree.
+                </p>
+            </div>
+
+            <form method="post" class="tree-report-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="form-errors">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="form-field">
+                    <label for="{{ form.username.id_for_label }}">
+                        Username
+                    </label>
+
+                    {{ form.username }}
+
+                    {% if form.username.errors %}
+                        <div class="field-errors">
+                            {{ form.username.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.password.id_for_label }}">
+                        Password
+                    </label>
+
+                    {{ form.password }}
+
+                    {% if form.password.errors %}
+                        <div class="field-errors">
+                            {{ form.password.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% if next %}
+                    <input
+                        type="hidden"
+                        name="next"
+                        value="{{ next }}"
+                    >
+                {% endif %}
+
+                <div class="form-actions">
+                    <button type="submit" class="primary-button">
+                        Login
+                    </button>
+
+                    <a
+                        href="{% url 'home' %}"
+                        class="secondary-button"
+                    >
+                        Cancel
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+
+        <div class="form-note">
+            <strong>New to I-V Tree?</strong>
+
+            <p>
+                Create an account to submit tree reports and
+                contribute progress updates to community reports.
+            </p>
+
+            <a
+                href="{% url 'register' %}"
+                class="report-link"
+            >
+                Create an account
+            </a>
+        </div>
+
+    </div>
 </section>
 
 {% endblock %}

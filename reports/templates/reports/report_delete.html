@@ -9,25 +9,55 @@
 
         <div class="section-heading">
             <p class="section-kicker">Delete Tree Report</p>
+
             <h1>Delete Report</h1>
+
             <p>
-                Are you sure you want to delete the report for
-                {{ report.location }}?
+                Review the report before confirming permanent deletion.
             </p>
         </div>
 
-        <!-- Delete confirmation form -->
-        <form method="post">
-            {% csrf_token %}
+        <div class="form-card">
 
-            <button type="submit" class="delete-button">
-                Yes, Delete Report
-            </button>
+            <div class="form-intro">
+                <h2>{{ report.location }}</h2>
 
-            <a href="{% url 'report_detail' report.pk %}" class="primary-button">
-                Cancel
-            </a>
-        </form>
+                <p>
+                    Are you sure you want to permanently delete
+                    this tree report?
+                </p>
+            </div>
+
+            <div class="form-note">
+                <strong>This action cannot be undone.</strong>
+
+                <p>
+                    Deleting this report will also remove any progress
+                    updates linked to it.
+                </p>
+            </div>
+
+            <form method="post" class="tree-report-form">
+                {% csrf_token %}
+
+                <div class="form-actions">
+
+                    <button type="submit" class="delete-button">
+                        Yes, Delete Report
+                    </button>
+
+                    <a
+                        href="{% url 'report_detail' report.pk %}"
+                        class="secondary-button"
+                    >
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
 
     </div>
 </section>

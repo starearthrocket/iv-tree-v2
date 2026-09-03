@@ -4,37 +4,120 @@
 
 {% block content %}
 
-<section class="about-section">
+<section class="report-form-section">
     <div class="section-container">
 
         <div class="section-heading">
             <p class="section-kicker">About I-V Tree</p>
-            <h1>Protecting trees through community action</h1>
+
+            <h1>Protecting Trees Through Community Action</h1>
+
+            <p>
+                I-V Tree helps communities record, protect and monitor
+                trees affected by invasive ivy.
+            </p>
         </div>
 
-        <div class="about-content">
-            <p>
-                I-V Tree is a community conservation project designed to help
-                people report and monitor trees affected by invasive ivy.
-            </p>
+        <div class="form-card">
 
-            <p>
-                Users can submit tree reports, share progress updates and
-                monitor how reported trees change over time. By bringing these
-                reports together, I-V Tree provides a simple way for
-                communities to record local conservation activity.
-            </p>
+            <div class="form-intro">
+                <h2>What is I-V Tree?</h2>
 
+                <p>
+                    I-V Tree is a community conservation project designed
+                    to provide a simple way to report trees affected by
+                    invasive ivy and record how their condition changes
+                    over time.
+                </p>
+            </div>
+
+            <div class="about-copy">
+                <p>
+                    Registered users can submit tree reports with a location,
+                    description and optional photograph. Members of the
+                    community can then add progress updates as a reported
+                    tree is protected and monitored.
+                </p>
+
+                <p>
+                    Each progress update remains linked to its original
+                    tree report, creating a continuing record of activity
+                    and changes to the tree's condition.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="section-heading">
+            <p class="section-kicker">How It Works</p>
             <h2>Report. Protect. Monitor.</h2>
+        </div>
+
+        <div class="process-grid">
+
+            <article class="process-card">
+                <h3>Report</h3>
+
+                <p>
+                    Record a tree affected by ivy with its location,
+                    description and an optional photograph.
+                </p>
+            </article>
+
+            <article class="process-card">
+                <h3>Protect</h3>
+
+                <p>
+                    Encourage responsible community action to support
+                    local trees and their surrounding environment.
+                </p>
+            </article>
+
+            <article class="process-card">
+                <h3>Monitor</h3>
+
+                <p>
+                    Add progress updates and follow changes to reported
+                    trees over time.
+                </p>
+            </article>
+
+        </div>
+
+        <div class="form-note">
+            <strong>About the map</strong>
 
             <p>
-                Report trees affected by invasive ivy, record action taken and
-                add progress updates as the tree is monitored over time.
+                The map currently used by I-V Tree is a prototype
+                visualisation of submitted tree reports. Marker positions
+                are approximate and do not represent exact geographic
+                locations.
             </p>
+        </div>
 
-            <a href="{% url 'report_list' %}" class="primary-button">
+        <div class="section-action">
+            <a
+                href="{% url 'report_list' %}"
+                class="secondary-button"
+            >
                 View Tree Reports
             </a>
+
+            {% if user.is_authenticated %}
+                <a
+                    href="{% url 'report_tree' %}"
+                    class="primary-button"
+                >
+                    Report a Tree
+                </a>
+            {% else %}
+                <a
+                    href="{% url 'register' %}"
+                    class="primary-button"
+                >
+                    Join I-V Tree
+                </a>
+            {% endif %}
         </div>
 
     </div>

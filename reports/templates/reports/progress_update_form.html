@@ -1,6 +1,12 @@
 {% extends "reports/base.html" %}
 
-{% block title %}Add Progress Update | I-V Tree{% endblock %}
+{% block title %}
+    {% if form.instance.pk %}
+        Edit Progress Update | I-V Tree
+    {% else %}
+        Add Progress Update | I-V Tree
+    {% endif %}
+{% endblock %}
 
 {% block content %}
 
@@ -9,23 +15,136 @@
 
         <div class="section-heading">
             <p class="section-kicker">Monitor Tree</p>
-            <h1>Add Progress Update</h1>
-            <p>
-                Add an update for the tree reported at
-                {{ report.location }}.
-            </p>
+
+            {% if form.instance.pk %}
+                <h1>Edit Progress Update</h1>
+
+                <p>
+                    Update the monitoring record for the tree reported at
+                    {{ report.location }}.
+                </p>
+            {% else %}
+                <h1>Add Progress Update</h1>
+
+                <p>
+                    Record a new update for the tree reported at
+                    {{ report.location }}.
+                </p>
+            {% endif %}
         </div>
 
-        <!-- Progress update form -->
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+        <div class="form-card">
 
-            {{ form.as_p }}
+            <div class="form-intro">
+                <h2>Progress Details</h2>
 
-            <button type="submit" class="primary-button">
-                Add Update
-            </button>
-        </form>
+                <p>
+                    Record what has changed, choose the tree's current
+                    status and optionally upload a photograph.
+                </p>
+            </div>
+
+            <form
+                method="post"
+                enctype="multipart/form-data"
+                class="tree-report-form"
+            >
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="form-errors">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="form-field">
+                    <label for="{{ form.notes.id_for_label }}">
+                        Progress Notes
+                    </label>
+
+                    {{ form.notes }}
+
+                    {% if form.notes.errors %}
+                        <div class="field-errors">
+                            {{ form.notes.errors }}
+                        </div>
+                    {% endif %}
+
+                    <p class="field-help">
+                        Describe any action taken or changes noticed
+                        since the previous report or update.
+                    </p>
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.status.id_for_label }}">
+                        Current Status
+                    </label>
+
+                    {{ form.status }}
+
+                    {% if form.status.errors %}
+                        <div class="field-errors">
+                            {{ form.status.errors }}
+                        </div>
+                    {% endif %}
+
+                    <p class="field-help">
+                        Select the status that best describes the tree
+                        at the time of this update.
+                    </p>
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.image.id_for_label }}">
+                        Progress Photo
+                    </label>
+
+                    {{ form.image }}
+
+                    {% if form.image.errors %}
+                        <div class="field-errors">
+                            {{ form.image.errors }}
+                        </div>
+                    {% endif %}
+
+                    <p class="field-help">
+                        A photograph is optional, but it can help show
+                        how the tree's condition has changed over time.
+                    </p>
+                </div>
+
+                <div class="form-actions">
+
+                    <button type="submit" class="primary-button">
+                        {% if form.instance.pk %}
+                            Save Changes
+                        {% else %}
+                            Add Update
+                        {% endif %}
+                    </button>
+
+                    <a
+                        href="{% url 'report_detail' report.pk %}"
+                        class="secondary-button"
+                    >
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        <div class="form-note">
+            <strong>Monitoring progress</strong>
+
+            <p>
+                Progress updates remain linked to the original tree report,
+                creating a record of how its condition changes over time.
+            </p>
+        </div>
 
     </div>
 </section>

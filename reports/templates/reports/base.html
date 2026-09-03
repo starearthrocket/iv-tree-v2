@@ -9,41 +9,130 @@
 
     <title>{% block title %}I-V Tree{% endblock %}</title>
 
-    <link rel="stylesheet" href="{% static 'reports/css/style.css' %}">
+    <link
+        rel="stylesheet"
+        href="{% static 'reports/css/style.css' %}"
+    >
 </head>
 
 <body>
+
+    <!-- Accessibility skip link -->
+    <a href="#main-content" class="skip-link">
+        Skip to main content
+    </a>
 
     <!-- Main site header and navigation -->
     <header class="site-header">
         <div class="nav-container">
 
-            <a href="/" class="logo-link" aria-label="I-V Tree home">
+            <a
+                href="{% url 'home' %}"
+                class="logo-link"
+                aria-label="I-V Tree home"
+            >
                 <img
                     src="{% static 'reports/images/iv-tree-logo.png' %}"
-                    alt="I-V Tree logo"
+                    alt="I-V Tree"
                     class="site-logo"
                 >
             </a>
 
             <nav aria-label="Main navigation">
                 <ul class="nav-links">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="{% url 'report_tree' %}">Report a Tree</a></li>
-                    <li><a href="{% url 'report_list' %}">Reports</a></li>
-                    <li><a href="{% url 'about' %}">About</a></li>
 
-{% if user.is_authenticated %}
-    <li>
-        <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit">Logout</button>
-        </form>
-    </li>
-{% else %}
-    <li><a href="{% url 'login' %}">Login</a></li>
-    <li><a href="{% url 'register' %}">Register</a></li>
-{% endif %}
+                    <li>
+                        <a
+                            href="{% url 'home' %}"
+                            {% if request.resolver_match.url_name == 'home' %}
+                                class="active"
+                                aria-current="page"
+                            {% endif %}
+                        >
+                            Home
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="{% url 'report_tree' %}"
+                            {% if request.resolver_match.url_name == 'report_tree' %}
+                                class="active"
+                                aria-current="page"
+                            {% endif %}
+                        >
+                            Report a Tree
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="{% url 'report_list' %}"
+                            {% if request.resolver_match.url_name == 'report_list' %}
+                                class="active"
+                                aria-current="page"
+                            {% endif %}
+                        >
+                            Reports
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="{% url 'about' %}"
+                            {% if request.resolver_match.url_name == 'about' %}
+                                class="active"
+                                aria-current="page"
+                            {% endif %}
+                        >
+                            About
+                        </a>
+                    </li>
+
+                    {% if user.is_authenticated %}
+
+                        <li>
+                            <form
+                                method="post"
+                                action="{% url 'logout' %}"
+                                class="logout-form"
+                            >
+                                {% csrf_token %}
+
+                                <button type="submit">
+                                    Logout
+                                </button>
+                            </form>
+                        </li>
+
+                    {% else %}
+
+                        <li>
+                            <a
+                                href="{% url 'login' %}"
+                                {% if request.resolver_match.url_name == 'login' %}
+                                    class="active"
+                                    aria-current="page"
+                                {% endif %}
+                            >
+                                Login
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="{% url 'register' %}"
+                                {% if request.resolver_match.url_name == 'register' %}
+                                    class="active"
+                                    aria-current="page"
+                                {% endif %}
+                            >
+                                Register
+                            </a>
+                        </li>
+
+                    {% endif %}
+
                 </ul>
             </nav>
 
@@ -52,24 +141,30 @@
 
     <!-- Success and feedback messages -->
     {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-            <div class="message {{ message.tags }}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
-{% endif %}
+        <div
+            class="messages"
+            aria-live="polite"
+            aria-atomic="true"
+        >
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
-    <!-- Page-specific content will appear here -->
-    <main>
+    <!-- Page-specific content -->
+    <main id="main-content">
         {% block content %}
         {% endblock %}
     </main>
 
     <!-- Site footer -->
     <footer class="site-footer">
-        <p>&copy; 2026 I-V Tree. Protecting trees together.</p>
+        <p>
+            &copy; 2026 I-V Tree. Protecting trees together.
+        </p>
     </footer>
 
 </body>

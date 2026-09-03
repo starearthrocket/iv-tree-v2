@@ -7,7 +7,7 @@
 <section class="reports-page">
     <div class="section-container">
 
-        <div class="section-heading">
+        <div class="section-heading reports-page-heading">
             <p class="section-kicker">Community Reports</p>
             <h1>Tree Reports</h1>
             <p>
@@ -17,81 +17,135 @@
         </div>
 
         <!-- Search and filter tree reports -->
-        <form method="get" class="report-search-form">
+        <div class="filter-panel">
+            <form method="get" class="report-search-form">
 
-            <label for="report-search">Search reports by location</label>
+                <div class="filter-field">
+                    <label for="report-search">
+                        Search reports by location or description
+                    </label>
 
-            <input
-                type="search"
-                id="report-search"
-                name="search"
-                value="{{ search_query|default:'' }}"
-                placeholder="e.g. Bewdley"
-            >
-
-            <label for="status-filter">Filter by status</label>
-
-            <select id="status-filter" name="status">
-                <option value="">All statuses</option>
-
-                {% for value, label in status_choices %}
-                    <option
-                        value="{{ value }}"
-                        {% if status_filter == value %}selected{% endif %}
+                    <input
+                        type="search"
+                        id="report-search"
+                        name="search"
+                        value="{{ search_query|default:'' }}"
+                        placeholder="e.g. Bewdley"
                     >
-                        {{ label }}
-                    </option>
-                {% endfor %}
-            </select>
-
-            <button type="submit" class="primary-button">
-                Search / Filter
-            </button>
-
-            {% if search_query or status_filter %}
-                <a href="{% url 'report_list' %}" class="report-link">
-                    Clear Filters
-                </a>
-            {% endif %}
-
-        </form>
-
-        <!-- All submitted tree reports -->
-        <div class="reports-grid">
-            {% for report in reports %}
-
-                <article class="report-card">
-                    <div class="report-card-content">
-
-                        <span class="report-status">
-                            {{ report.get_status_display }}
-                        </span>
-
-                        <h2>{{ report.location }}</h2>
-
-                        <p>{{ report.description|truncatewords:30 }}</p>
-
-                        <p class="report-date">
-                            Reported {{ report.date_reported|date:"j F Y" }}
-                        </p>
-
-                        <a href="{% url 'report_detail' report.pk %}" class="report-link">
-                            View Report
-                        </a>
-
-                    </div>
-                </article>
-
-            {% empty %}
-
-                <div class="empty-reports">
-                    <h2>No tree reports found</h2>
-                    <p>
-                        Try changing your search or status filter.
-                    </p>
                 </div>
 
-            {% endfor %}
+                <div class="filter-field">
+                    <label for="status-filter">
+                        Filter by status
+                    </label>
+
+                    <select id="status-filter" name="status">
+                        <option value="">All statuses</option>
+
+                        {% for value, label in status_choices %}
+                            <option
+                                value="{{ value }}"
+                                {% if status_filter == value %}selected{% endif %}
+                            >
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-actions">
+                    <button type="submit" class="primary-button">
+                        Search / Filter
+                    </button>
+
+                    {% if search_query or status_filter %}
+                        <a
+                            href="{% url 'report_list' %}"
+                            class="secondary-button"
+                        >
+                            Clear Filters
+                        </a>
+                    {% endif %}
+                </div>
+
+            </form>
+        </div>
+
+        <!-- All submitted tree reports -->
+        <div class="reports-results">
+
+            {% if search_query or status_filter %}
+                <p class="results-summary">
+                    Showing filtered tree reports.
+                </p>
+            {% endif %}
+
+            <div class="reports-grid">
+                {% for report in reports %}
+
+                    <article class="report-card">
+                        <div class="report-card-content">
+
+                            <span
+                                class="report-status status-{{ report.status }}"
+                            >
+                                {{ report.get_status_display }}
+                            </span>
+
+                            <h2>{{ report.location }}</h2>
+
+                            <p>
+                                {{ report.description|truncatewords:30 }}
+                            </p>
+
+                            <p class="report-date">
+                                Reported
+                                {{ report.date_reported|date:"j F Y" }}
+                            </p>
+
+                            <a
+                                href="{% url 'report_detail' report.pk %}"
+                                class="report-link"
+                            >
+                                View Report
+                            </a>
+
+                        </div>
+                    </article>
+
+                {% empty %}
+
+                    <div class="empty-reports">
+                        <h2>No tree reports found</h2>
+
+                        {% if search_query or status_filter %}
+                            <p>
+                                Try changing or clearing your current filters.
+                            </p>
+
+                            <a
+                                href="{% url 'report_list' %}"
+                                class="secondary-button"
+                            >
+                                Clear Filters
+                            </a>
+                        {% else %}
+                            <p>
+                                No tree reports have been submitted yet.
+                            </p>
+
+                            <a
+                                href="{% url 'report_tree' %}"
+                                class="primary-button"
+                            >
+                                Report a Tree
+                            </a>
+                        {% endif %}
+                    </div>
+
+                {% endfor %}
+            </div>
+
         </div>
 
     </div>

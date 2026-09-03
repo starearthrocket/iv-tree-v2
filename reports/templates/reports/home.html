@@ -5,6 +5,7 @@
 
 {% block content %}
 
+<!-- Homepage hero -->
 <section class="hero">
     <div class="hero-overlay">
         <div class="hero-content">
@@ -17,7 +18,9 @@
                 and monitor their progress over time.
             </p>
 
-            <a href="#" class="primary-button">Report a Tree</a>
+            <a href="{% url 'report_tree' %}" class="primary-button">
+                Report a Tree
+            </a>
         </div>
     </div>
 </section>
@@ -77,6 +80,13 @@
             </article>
 
         </div>
+
+        <div class="section-action">
+            <a href="{% url 'report_tree' %}" class="primary-button">
+                Report a Tree
+            </a>
+        </div>
+
     </div>
 </section>
 
@@ -99,17 +109,26 @@
                 <article class="report-card">
                     <div class="report-card-content">
 
-                        <span class="report-status">
+                        <span class="report-status status-{{ report.status }}">
                             {{ report.get_status_display }}
                         </span>
 
                         <h3>{{ report.location }}</h3>
 
-                        <p>{{ report.description|truncatewords:20 }}</p>
+                        <p>
+                            {{ report.description|truncatewords:20 }}
+                        </p>
 
                         <p class="report-date">
                             Reported {{ report.date_reported|date:"j F Y" }}
                         </p>
+
+                        <a
+                            href="{% url 'report_detail' report.pk %}"
+                            class="report-link"
+                        >
+                            View report
+                        </a>
 
                     </div>
                 </article>
@@ -118,16 +137,33 @@
 
                 <div class="empty-reports">
                     <h3>No tree reports yet</h3>
+
                     <p>
                         Be the first to report a tree affected by invasive ivy.
                     </p>
+
+                    <a
+                        href="{% url 'report_tree' %}"
+                        class="primary-button"
+                    >
+                        Report a Tree
+                    </a>
                 </div>
 
             {% endfor %}
         </div>
 
+        {% if recent_reports %}
+            <div class="section-action">
+                <a href="{% url 'report_list' %}" class="secondary-button">
+                    View All Reports
+                </a>
+            </div>
+        {% endif %}
+
     </div>
 </section>
+
 <!-- Prototype tree reports map section -->
 <section class="map-section">
     <div class="section-container">
@@ -142,34 +178,36 @@
         </div>
 
         <div class="map-container">
-    <img
-        src="{% static 'reports/images/reports-map.jpg' %}"
-        alt="Prototype map visualisation showing approximate tree report locations across Worcestershire"
-        class="reports-map"
-    >
 
-    <!-- Prototype report markers -->
-    <div class="map-marker marker-one reported">
-        <img
-            src="{% static 'reports/images/map-marker.png' %}"
-            alt=""
-        >
-    </div>
+            <img
+                src="{% static 'reports/images/reports-map.jpg' %}"
+                alt="Prototype map visualisation showing approximate tree report locations across Worcestershire"
+                class="reports-map"
+            >
 
-    <div class="map-marker marker-two action-needed">
-        <img
-            src="{% static 'reports/images/map-marker.png' %}"
-            alt=""
-        >
-    </div>
+            <!-- Prototype report markers -->
+            <div class="map-marker marker-one reported">
+                <img
+                    src="{% static 'reports/images/map-marker.png' %}"
+                    alt=""
+                >
+            </div>
 
-    <div class="map-marker marker-three monitoring">
-        <img
-            src="{% static 'reports/images/map-marker.png' %}"
-            alt=""
-        >
-    </div>
-    </div>
+            <div class="map-marker marker-two action-needed">
+                <img
+                    src="{% static 'reports/images/map-marker.png' %}"
+                    alt=""
+                >
+            </div>
+
+            <div class="map-marker marker-three monitoring">
+                <img
+                    src="{% static 'reports/images/map-marker.png' %}"
+                    alt=""
+                >
+            </div>
+
+        </div>
 
         <p class="map-note">
             This map is a prototype visualisation. Marker positions are

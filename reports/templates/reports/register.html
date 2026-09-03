@@ -4,17 +4,136 @@
 
 {% block content %}
 
-<section class="form-section">
-    <h1>Create an Account</h1>
+<section class="report-form-section">
+    <div class="section-container">
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
+        <div class="section-heading">
+            <p class="section-kicker">Join I-V Tree</p>
 
-        <button type="submit" class="primary-button">
-            Register
-        </button>
-    </form>
+            <h1>Create an Account</h1>
+
+            <p>
+                Create an account to report trees, contribute
+                progress updates and manage your own reports.
+            </p>
+        </div>
+
+        <div class="form-card">
+
+            <div class="form-intro">
+                <h2>Your Account</h2>
+
+                <p>
+                    Choose a username and secure password
+                    to join the I-V Tree community.
+                </p>
+            </div>
+
+            <form method="post" class="tree-report-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="form-errors">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="form-field">
+                    <label for="{{ form.username.id_for_label }}">
+                        Username
+                    </label>
+
+                    {{ form.username }}
+
+                    {% if form.username.errors %}
+                        <div class="field-errors">
+                            {{ form.username.errors }}
+                        </div>
+                    {% endif %}
+
+                    {% if form.username.help_text %}
+                        <div class="field-help">
+                            {{ form.username.help_text }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.password1.id_for_label }}">
+                        Password
+                    </label>
+
+                    {{ form.password1 }}
+
+                    {% if form.password1.errors %}
+                        <div class="field-errors">
+                            {{ form.password1.errors }}
+                        </div>
+                    {% endif %}
+
+                    {% if form.password1.help_text %}
+                        <div class="password-help">
+                            {{ form.password1.help_text|safe }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.password2.id_for_label }}">
+                        Confirm Password
+                    </label>
+
+                    {{ form.password2 }}
+
+                    {% if form.password2.errors %}
+                        <div class="field-errors">
+                            {{ form.password2.errors }}
+                        </div>
+                    {% endif %}
+
+                    {% if form.password2.help_text %}
+                        <div class="field-help">
+                            {{ form.password2.help_text }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-actions">
+
+                    <button type="submit" class="primary-button">
+                        Create Account
+                    </button>
+
+                    <a
+                        href="{% url 'home' %}"
+                        class="secondary-button"
+                    >
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        <div class="form-note">
+            <strong>Already have an account?</strong>
+
+            <p>
+                Log in to continue reporting and monitoring
+                trees with the I-V Tree community.
+            </p>
+
+            <a
+                href="{% url 'login' %}"
+                class="report-link"
+            >
+                Log in
+            </a>
+        </div>
+
+    </div>
 </section>
 
 {% endblock %}

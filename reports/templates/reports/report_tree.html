@@ -6,21 +6,124 @@
 
 <section class="report-form-section">
     <div class="section-container">
-        <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-
-    {{ form.as_p }}
-
-    <button type="submit" class="primary-button">
-        Submit Report
-    </button>
-</form>
 
         <div class="section-heading">
             <p class="section-kicker">Tree Report</p>
+
             <h1>Report a Tree</h1>
+
             <p>
-                Tell us about a tree affected by invasive ivy.
+                Tell the I-V Tree community about a tree affected
+                by invasive ivy.
+            </p>
+        </div>
+
+        <div class="form-card">
+
+            <div class="form-intro">
+                <h2>Tree Details</h2>
+
+                <p>
+                    Add the location and a short description of the tree.
+                    You can also upload a photograph to help document
+                    its condition.
+                </p>
+            </div>
+
+            <form
+                method="post"
+                enctype="multipart/form-data"
+                class="tree-report-form"
+            >
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="form-errors">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="form-field">
+                    <label for="{{ form.location.id_for_label }}">
+                        Location
+                    </label>
+
+                    {{ form.location }}
+
+                    {% if form.location.errors %}
+                        <div class="field-errors">
+                            {{ form.location.errors }}
+                        </div>
+                    {% endif %}
+
+                    <p class="field-help">
+                        Enter a clear location such as a town,
+                        park or local landmark.
+                    </p>
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.description.id_for_label }}">
+                        Description
+                    </label>
+
+                    {{ form.description }}
+
+                    {% if form.description.errors %}
+                        <div class="field-errors">
+                            {{ form.description.errors }}
+                        </div>
+                    {% endif %}
+
+                    <p class="field-help">
+                        Describe the ivy growth and anything useful
+                        for someone monitoring the tree.
+                    </p>
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.image.id_for_label }}">
+                        Tree Photo
+                    </label>
+
+                    {{ form.image }}
+
+                    {% if form.image.errors %}
+                        <div class="field-errors">
+                            {{ form.image.errors }}
+                        </div>
+                    {% endif %}
+
+                    <p class="field-help">
+                        A photograph is optional, but it can help
+                        document the tree's condition over time.
+                    </p>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="primary-button">
+                        Submit Report
+                    </button>
+
+                    <a
+                        href="{% url 'report_list' %}"
+                        class="secondary-button"
+                    >
+                        Cancel
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+
+        <div class="form-note">
+            <strong>What happens next?</strong>
+
+            <p>
+                Once submitted, the report will appear in the community
+                tree reports. Progress updates can then be added as the
+                tree is protected and monitored.
             </p>
         </div>
 
