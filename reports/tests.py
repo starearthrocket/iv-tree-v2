@@ -306,3 +306,362 @@ class TreeReportPermissionTest(TestCase):
                 pk=self.report.pk,
             ).exists()
         )
+
+
+class ProgressUpdatePermissionTest(TestCase):
+    """Tests for progress update CRUD and ownership permissions."""
+
+    def setUp(self):
+        """Create users, a report and an owned progress update."""
+        self.report_owner = User.objects.create_user(
+            username="treeowner",
+            password="testpassword123",
+        )
+
+        self.update_owner = User.objects.create_user(
+            username="updateowner",
+            password="testpassword123",
+        )
+
+        self.other_user = User.objects.create_user(
+            username="updateother",
+            password="testpassword123",
+        )
+
+        self.report = TreeReport.objects.create(
+            owner=self.report_owner,
+            location="Progress Test Tree",
+            description="Tree used for progress update tests.",
+        )
+
+        self.update = ProgressUpdate.objects.create(
+            owner=self.update_owner,
+            tree_report=self.report,
+            notes="Original progress update.",
+            status="monitoring",
+        )
+
+    def test_logged_in_user_can_create_progress_update(self):
+        """Test an authenticated user can add an update."""
+        self.client.login(
+            username="updateother",
+            password="testpassword123",
+        )
+
+        response = self.client.post(
+            f"/reports/{self.report.pk}/update/",
+            {
+                "notes": "New community progress update.",
+                "status": "protected",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(
+            ProgressUpdate.objects.filter(
+                notes="New community progress update.",
+            ).exists()
+        )
+
+    def test_progress_update_links_to_correct_report(self):
+        """Test a new update is linked to the requested report."""
+        self.client.login(
+            username="updateother",
+            password="testpassword123",
+        )
+
+        self.client.post(
+            f"/reports/{self.report.pk}/update/",
+            {
+                "notes": "Relationship test update.",
+                "status": "monitoring",
+            },
+        )
+
+        update = ProgressUpdate.objects.get(
+            notes="Relationship test update.",
+        )
+
+        self.assertEqual(update.tree_report, self.report)
+
+    def test_progress_update_belongs_to_creator(self):
+        """Test a new update is assigned to its creator."""
+        self.client.login(
+            username="updateother",
+            password="testpassword123",
+        )
+
+        self.client.post(
+            f"/reports/{self.report.pk}/update/",
+            {
+                "notes": "Ownership test update.",
+                "status": "monitoring",
+            },
+        )
+
+        update = ProgressUpdate.objects.get(
+            notes="Ownership test update.",
+        )
+
+        self.assertEqual(update.owner, self.other_user)
+
+    def test_owner_can_edit_progress_update(self):
+        """Test the update owner can edit their update."""
+        self.client.login(
+            username="updateowner",
+            password="testpassword123",
+        )
+
+        response = self.client.post(
+            f"/updates/{self.update.pk}/edit/",
+            {
+                "notes": "Edited progress update.",
+                "status": "protected",
+            },
+        )
+
+        self.update.refresh_from_db()
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            self.update.notes,
+            "Edited progress update.",
+        )
+
+    def test_other_user_cannot_edit_progress_update(self):
+        """Test another user cannot edit someone else's update."""
+        self.client.login(
+            username="updateother",
+            password="testpassword123",
+        )
+
+        self.client.post(
+            f"/updates/{self.update.pk}/edit/",
+            {
+                "notes": "Unauthorised progress edit.",
+                "status": "protected",
+            },
+        )
+
+        self.update.refresh_from_db()
+
+        self.assertEqual(
+            self.update.notes,
+            "Original progress update.",
+        )
+
+    def test_owner_can_delete_progress_update(self):
+        """Test the update owner can delete their update."""
+        self.client.login(
+            username="updateowner",
+            password="testpassword123",
+        )
+
+        response = self.client.post(
+            f"/updates/{self.update.pk}/delete/",
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(
+            ProgressUpdate.objects.filter(
+                pk=self.update.pk,
+            ).exists()
+        )
+
+    def test_other_user_cannot_delete_progress_update(self):
+        """Test another user cannot delete someone else's update."""
+        self.client.login(
+            username="updateother",
+            password="testpassword123",
+        )
+
+        response = self.client.post(
+            f"/updates/{self.update.pk}/delete/",
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(
+            ProgressUpdate.objects.filter(
+                pk=self.update.pk,
+            ).exists()
+        )
+
+
+class ReportSearchFilterTest(TestCase):
+    """Tests for tree report search and status filtering."""
+
+    def setUp(self):
+        """Create reports with different content and statuses."""
+        self.woodland_report = TreeReport.objects.create(
+            location="Oak Woodland",
+            description="Large tree beside the woodland path.",
+            status="reported",
+        )
+
+        self.park_report = TreeReport.objects.create(
+            location="Riverside Park",
+            description="Ivy covering the lower trunk.",
+            status="protected",
+        )
+
+        self.monitoring_report = TreeReport.objects.create(
+            location="Village Green",
+            description="Tree currently being monitored.",
+            status="monitoring",
+        )
+
+    def test_search_by_location(self):
+        """Test reports can be searched by location."""
+        response = self.client.get(
+            "/reports/",
+            {"search": "Oak"},
+        )
+
+        self.assertContains(response, "Oak Woodland")
+        self.assertNotContains(response, "Riverside Park")
+
+    def test_search_by_description(self):
+        """Test reports can be searched by description."""
+        response = self.client.get(
+            "/reports/",
+            {"search": "lower trunk"},
+        )
+
+        self.assertContains(response, "Riverside Park")
+        self.assertNotContains(response, "Oak Woodland")
+
+    def test_filter_by_status(self):
+        """Test reports can be filtered by status."""
+        response = self.client.get(
+            "/reports/",
+            {"status": "monitoring"},
+        )
+
+        self.assertContains(response, "Village Green")
+        self.assertNotContains(response, "Oak Woodland")
+        self.assertNotContains(response, "Riverside Park")
+
+    def test_search_and_status_filter_together(self):
+        """Test search and status filters can be combined."""
+        response = self.client.get(
+            "/reports/",
+            {
+                "search": "Riverside",
+                "status": "protected",
+            },
+        )
+
+        self.assertContains(response, "Riverside Park")
+        self.assertNotContains(response, "Oak Woodland")
+        self.assertNotContains(response, "Village Green")
+
+    def test_search_excludes_non_matching_reports(self):
+        """Test unrelated reports are excluded from search results."""
+        response = self.client.get(
+            "/reports/",
+            {"search": "Oak"},
+        )
+
+        reports = response.context["reports"]
+
+        self.assertIn(self.woodland_report, reports)
+        self.assertNotIn(self.park_report, reports)
+        self.assertNotIn(self.monitoring_report, reports)
+
+
+class AuthenticationTest(TestCase):
+    """Tests for registration and authentication protection."""
+
+    def test_successful_registration_creates_user(self):
+        """Test valid registration creates a new user."""
+        response = self.client.post(
+            "/register/",
+            {
+                "username": "registereduser",
+                "password1": "SecureTestPassword123!",
+                "password2": "SecureTestPassword123!",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(
+            User.objects.filter(
+                username="registereduser",
+            ).exists()
+        )
+
+    def test_successful_registration_redirects_to_login(self):
+        """Test successful registration redirects to login."""
+        response = self.client.post(
+            "/register/",
+            {
+                "username": "redirectuser",
+                "password1": "SecureTestPassword123!",
+                "password2": "SecureTestPassword123!",
+            },
+        )
+
+        self.assertRedirects(
+            response,
+            "/accounts/login/",
+        )
+
+    def test_mismatched_passwords_do_not_create_user(self):
+        """Test mismatched passwords prevent registration."""
+        response = self.client.post(
+            "/register/",
+            {
+                "username": "invaliduser",
+                "password1": "SecureTestPassword123!",
+                "password2": "DifferentPassword123!",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(
+            User.objects.filter(
+                username="invaliduser",
+            ).exists()
+        )
+
+    def test_logged_out_user_cannot_add_progress_update(self):
+        """Test progress update creation requires authentication."""
+        report = TreeReport.objects.create(
+            location="Protected Route Tree",
+            description="Authentication test report.",
+        )
+
+        response = self.client.get(
+            f"/reports/{report.pk}/update/",
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/accounts/login/", response.url)
+
+    def test_logged_out_user_cannot_edit_report(self):
+        """Test report editing requires authentication."""
+        report = TreeReport.objects.create(
+            location="Edit Protected Tree",
+            description="Authentication test report.",
+        )
+
+        response = self.client.get(
+            f"/reports/{report.pk}/edit/",
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/accounts/login/", response.url)
+
+    def test_logged_out_user_cannot_delete_report(self):
+        """Test report deletion requires authentication."""
+        report = TreeReport.objects.create(
+            location="Delete Protected Tree",
+            description="Authentication test report.",
+        )
+
+        response = self.client.get(
+            f"/reports/{report.pk}/delete/",
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/accounts/login/", response.url)
