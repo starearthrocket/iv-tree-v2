@@ -20,6 +20,14 @@ def home(request):
     return render(request, "reports/home.html", context)
 
 
+def about(request):
+    """Display information about the I-V Tree project."""
+    return render(
+        request,
+        "reports/about.html",
+    )
+
+
 @login_required
 def report_tree(request):
     """Display and process the tree report form."""

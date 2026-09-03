@@ -15,6 +15,11 @@ urlpatterns = [
         name="home",
     ),
     path(
+        "about/",
+        views.about,
+        name="about",
+    ),
+    path(
         "report/",
         views.report_tree,
         name="report_tree",

@@ -31,7 +31,7 @@
                     <li><a href="/">Home</a></li>
                     <li><a href="{% url 'report_tree' %}">Report a Tree</a></li>
                     <li><a href="{% url 'report_list' %}">Reports</a></li>
-                    <li><a href="#">About</a></li>
+                    <li><a href="{% url 'about' %}">About</a></li>
 
 {% if user.is_authenticated %}
     <li>

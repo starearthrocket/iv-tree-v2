@@ -1,0 +1,43 @@
+{% extends "reports/base.html" %}
+
+{% block title %}About | I-V Tree{% endblock %}
+
+{% block content %}
+
+<section class="about-section">
+    <div class="section-container">
+
+        <div class="section-heading">
+            <p class="section-kicker">About I-V Tree</p>
+            <h1>Protecting trees through community action</h1>
+        </div>
+
+        <div class="about-content">
+            <p>
+                I-V Tree is a community conservation project designed to help
+                people report and monitor trees affected by invasive ivy.
+            </p>
+
+            <p>
+                Users can submit tree reports, share progress updates and
+                monitor how reported trees change over time. By bringing these
+                reports together, I-V Tree provides a simple way for
+                communities to record local conservation activity.
+            </p>
+
+            <h2>Report. Protect. Monitor.</h2>
+
+            <p>
+                Report trees affected by invasive ivy, record action taken and
+                add progress updates as the tree is monitored over time.
+            </p>
+
+            <a href="{% url 'report_list' %}" class="primary-button">
+                View Tree Reports
+            </a>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
