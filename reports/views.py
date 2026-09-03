@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 
 from .models import TreeReport
-from .forms import ProgressUpdateForm, TreeReportForm
+from .forms import ProgressUpdateForm, RegisterForm, TreeReportForm
 from django.db.models import Q
 
 
@@ -141,4 +141,22 @@ def progress_update_create(request, pk):
             "form": form,
             "report": report,
         },
+    )
+
+def register(request):
+    """Allow a new user to create an account."""
+    if request.method == "POST":
+        form = RegisterForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect("login")
+
+    else:
+        form = RegisterForm()
+
+    return render(
+        request,
+        "reports/register.html",
+        {"form": form},
     )
