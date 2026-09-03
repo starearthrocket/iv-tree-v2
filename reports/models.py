@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -5,6 +6,14 @@ class TreeReport(models.Model):
     """
     Stores a reported tree affected by invasive ivy.
     """
+
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="tree_reports",
+        null=True,
+        blank=True,
+    )
 
     STATUS_CHOICES = [
         ("reported", "Reported"),
@@ -36,6 +45,14 @@ class ProgressUpdate(models.Model):
     Stores progress updates linked to an individual tree report.
     """
 
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="progress_updates",
+        null=True,
+        blank=True,
+    )
+      
     tree_report = models.ForeignKey(
         TreeReport,
         on_delete=models.CASCADE,

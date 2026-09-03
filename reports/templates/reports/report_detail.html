@@ -43,20 +43,28 @@
 
         {% endif %}
 
-    <!-- Report actions -->
-    <div class="report-actions">
+<!-- Report actions -->
+<div class="report-actions">
+
+    {% if report.owner == user %}
         <a href="{% url 'report_edit' report.pk %}" class="primary-button">
-           Edit Report
+            Edit Report
         </a>
+    {% endif %}
 
+    {% if user.is_authenticated %}
         <a href="{% url 'progress_update_create' report.pk %}" class="primary-button">
-           Add Progress Update
+            Add Progress Update
         </a>
+    {% endif %}
 
+    {% if report.owner == user %}
         <a href="{% url 'report_delete' report.pk %}" class="delete-button">
-           Delete Report
+            Delete Report
         </a>
-    </div>
+    {% endif %}
+
+</div>
 
 </article>
 
@@ -90,6 +98,15 @@
                         alt="Progress update for {{ report.location }}"
                         class="report-detail-image"
                     >
+                {% endif %}
+
+                {% if update.owner == user %}
+                     <a
+                        href="{% url 'progress_update_edit' update.pk %}"
+                        class="primary-button"
+                    >
+                        Edit Update
+                    </a>
                 {% endif %}
 
             </article>

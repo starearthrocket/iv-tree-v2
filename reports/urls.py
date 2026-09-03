@@ -16,4 +16,9 @@ urlpatterns = [
         views.progress_update_create,
         name="progress_update_create",
     ),
+    path(
+    "updates/<int:pk>/edit/",
+    views.progress_update_edit,
+    name="progress_update_edit",
+),
 ]

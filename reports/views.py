@@ -1,9 +1,10 @@
 from django.contrib import messages
-from django.shortcuts import redirect, render
-
-from .models import TreeReport
-from .forms import ProgressUpdateForm, RegisterForm, TreeReportForm
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.shortcuts import get_object_or_404, redirect, render
+
+from .forms import ProgressUpdateForm, RegisterForm, TreeReportForm
+from .models import ProgressUpdate, TreeReport
 
 
 def home(request):
@@ -18,6 +19,8 @@ def home(request):
 
     return render(request, "reports/home.html", context)
 
+
+@login_required
 def report_tree(request):
     """Display and process the tree report form."""
 
@@ -25,7 +28,9 @@ def report_tree(request):
         form = TreeReportForm(request.POST, request.FILES)
 
         if form.is_valid():
-            form.save()
+            report = form.save(commit=False)
+            report.owner = request.user
+            report.save()
             messages.success(request, "Tree report submitted successfully.")
             return redirect("home")
 
@@ -66,16 +71,23 @@ def report_list(request):
 
 def report_detail(request, pk):
     """Display one individual tree report."""
-    report = TreeReport.objects.get(pk=pk)
+    report = get_object_or_404(TreeReport, pk=pk)
 
     return render(
         request,
         "reports/report_detail.html",
         {"report": report},
     )
+
+
+@login_required
 def report_edit(request, pk):
     """Edit an existing tree report."""
-    report = TreeReport.objects.get(pk=pk)
+    report = get_object_or_404(TreeReport, pk=pk)
+
+    if report.owner != request.user:
+       messages.error(request, "You can only edit your own tree reports.")
+       return redirect("report_detail", pk=report.pk)
 
     if request.method == "POST":
         form = TreeReportForm(
@@ -101,9 +113,18 @@ def report_edit(request, pk):
         },
     )
 
+
+@login_required
 def report_delete(request, pk):
     """Delete an existing tree report."""
-    report = TreeReport.objects.get(pk=pk)
+    report = get_object_or_404(TreeReport, pk=pk)
+
+    if report.owner != request.user:
+        messages.error(
+            request,
+            "You can only delete your own tree reports.",
+        )
+        return redirect("report_detail", pk=report.pk)
 
     if request.method == "POST":
         report.delete()
@@ -116,9 +137,11 @@ def report_delete(request, pk):
         {"report": report},
     )
 
+
+@login_required
 def progress_update_create(request, pk):
     """Add a progress update to an existing tree report."""
-    report = TreeReport.objects.get(pk=pk)
+    report = get_object_or_404(TreeReport, pk=pk)
 
     if request.method == "POST":
         form = ProgressUpdateForm(request.POST, request.FILES)
@@ -126,6 +149,7 @@ def progress_update_create(request, pk):
         if form.is_valid():
             update = form.save(commit=False)
             update.tree_report = report
+            update.owner = request.user
             update.save()
 
             messages.success(request, "Progress update added successfully.")
@@ -140,6 +164,49 @@ def progress_update_create(request, pk):
         {
             "form": form,
             "report": report,
+        },
+    )
+
+
+@login_required
+def progress_update_edit(request, pk):
+    """Edit an existing progress update."""
+    update = get_object_or_404(ProgressUpdate, pk=pk)
+
+    if update.owner != request.user:
+        messages.error(
+            request,
+            "You can only edit your own progress updates.",
+        )
+        return redirect(
+            "report_detail",
+            pk=update.tree_report.pk,
+        )
+    if request.method == "POST":
+        form = ProgressUpdateForm(
+            request.POST,
+            request.FILES,
+            instance=update,
+        )
+
+        if form.is_valid():
+            form.save()
+            messages.success(
+                request,
+                "Progress update edited successfully.",
+            )
+            return redirect(
+                "report_detail",
+                pk=update.tree_report.pk,
+            )
+    else:
+        form = ProgressUpdateForm(instance=update)
+    return render(
+        request,
+        "reports/progress_update_form.html",
+        {
+            "form": form,
+            "report": update.tree_report,
         },
     )
 
