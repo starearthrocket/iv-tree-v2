@@ -56,7 +56,7 @@ def report_list(request):
     """Display, search and filter submitted tree reports."""
     reports = TreeReport.objects.order_by("-date_reported")
 
-    search_query = request.GET.get("search")
+    search_query = request.GET.get("search", "").strip()
     status_filter = request.GET.get("status")
 
     if search_query:
@@ -64,6 +64,7 @@ def report_list(request):
             Q(location__icontains=search_query)
             | Q(description__icontains=search_query)
         )
+
     if status_filter:
         reports = reports.filter(status=status_filter)
 
@@ -96,8 +97,11 @@ def report_edit(request, pk):
     report = get_object_or_404(TreeReport, pk=pk)
 
     if report.owner != request.user:
-       messages.error(request, "You can only edit your own tree reports.")
-       return redirect("report_detail", pk=report.pk)
+        messages.error(
+            request,
+            "You can only edit your own tree reports.",
+        )
+        return redirect("report_detail", pk=report.pk)
 
     if request.method == "POST":
         form = TreeReportForm(
@@ -192,6 +196,7 @@ def progress_update_edit(request, pk):
             "report_detail",
             pk=update.tree_report.pk,
         )
+
     if request.method == "POST":
         form = ProgressUpdateForm(
             request.POST,
@@ -209,8 +214,10 @@ def progress_update_edit(request, pk):
                 "report_detail",
                 pk=update.tree_report.pk,
             )
+
     else:
         form = ProgressUpdateForm(instance=update)
+
     return render(
         request,
         "reports/progress_update_form.html",
@@ -263,6 +270,10 @@ def register(request):
 
         if form.is_valid():
             form.save()
+            messages.success(
+                request,
+                "Account created successfully. You can now log in.",
+            )
             return redirect("login")
 
     else:

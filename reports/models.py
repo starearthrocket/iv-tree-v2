@@ -52,7 +52,7 @@ class ProgressUpdate(models.Model):
         null=True,
         blank=True,
     )
-      
+
     tree_report = models.ForeignKey(
         TreeReport,
         on_delete=models.CASCADE,

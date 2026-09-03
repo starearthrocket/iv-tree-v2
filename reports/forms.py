@@ -1,7 +1,7 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
 
 from .models import ProgressUpdate, TreeReport
-from django.contrib.auth.forms import UserCreationForm
 
 
 class TreeReportForm(forms.ModelForm):
@@ -11,12 +11,14 @@ class TreeReportForm(forms.ModelForm):
         model = TreeReport
         fields = ["location", "description", "image"]
 
+
 class ProgressUpdateForm(forms.ModelForm):
     """Form for users to add progress updates to a tree report."""
 
     class Meta:
         model = ProgressUpdate
         fields = ["notes", "image", "status"]
+
 
 class RegisterForm(UserCreationForm):
     """Form for new users to create an account."""
