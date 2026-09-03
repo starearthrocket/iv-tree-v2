@@ -144,18 +144,78 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 
 # Email
-# https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
+# Use the console backend during development.
+# Use an SMTP backend when DEBUG is disabled.
 
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}
+if DEBUG:
+    MAILERS = {
+        'default': {
+            'BACKEND': (
+                'django.core.mail.backends.console.EmailBackend'
+            ),
+        },
+    }
+else:
+    MAILERS = {
+        'default': {
+            'BACKEND': (
+                'django.core.mail.backends.smtp.EmailBackend'
+            ),
+            'OPTIONS': {
+                'host': os.environ.get(
+                    'EMAIL_HOST',
+                    'localhost',
+                ),
+                'port': int(
+                    os.environ.get(
+                        'EMAIL_PORT',
+                        '587',
+                    )
+                ),
+                'username': os.environ.get(
+                    'EMAIL_HOST_USER',
+                    '',
+                ),
+                'password': os.environ.get(
+                    'EMAIL_HOST_PASSWORD',
+                    '',
+                ),
+                'use_tls': (
+                    os.environ.get(
+                        'EMAIL_USE_TLS',
+                        'True',
+                    )
+                    == 'True'
+                ),
+                'timeout': 10,
+            },
+        },
+    }
+
+
+# Authentication redirects
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
+
+# Production security
+
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True
+    SECURE_SSL_REDIRECT = (
+        os.environ.get(
+            "SECURE_SSL_REDIRECT",
+            "True",
+        )
+        == "True"
+    )
+
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
+    SECURE_HSTS_SECONDS = int(
+        os.environ.get(
+            "SECURE_HSTS_SECONDS",
+            "0",
+        )
+    )
