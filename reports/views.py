@@ -43,6 +43,7 @@ def report_tree(request):
         {"form": form},
     )
 
+
 def report_list(request):
     """Display, search and filter submitted tree reports."""
     reports = TreeReport.objects.order_by("-date_reported")
@@ -68,6 +69,7 @@ def report_list(request):
             "status_choices": TreeReport.STATUS_CHOICES,
         },
     )
+
 
 def report_detail(request, pk):
     """Display one individual tree report."""
@@ -209,6 +211,42 @@ def progress_update_edit(request, pk):
             "report": update.tree_report,
         },
     )
+
+
+@login_required
+def progress_update_delete(request, pk):
+    """Delete an existing progress update."""
+    update = get_object_or_404(ProgressUpdate, pk=pk)
+
+    if update.owner != request.user:
+        messages.error(
+            request,
+            "You can only delete your own progress updates.",
+        )
+        return redirect(
+            "report_detail",
+            pk=update.tree_report.pk,
+        )
+
+    report_pk = update.tree_report.pk
+
+    if request.method == "POST":
+        update.delete()
+        messages.success(
+            request,
+            "Progress update deleted successfully.",
+        )
+        return redirect(
+            "report_detail",
+            pk=report_pk,
+        )
+
+    return render(
+        request,
+        "reports/progress_update_delete.html",
+        {"update": update},
+    )
+
 
 def register(request):
     """Allow a new user to create an account."""
