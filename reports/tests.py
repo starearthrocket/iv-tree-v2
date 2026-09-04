@@ -665,3 +665,192 @@ class AuthenticationTest(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertIn("/accounts/login/", response.url)
+
+
+class ProgressUpdateStatusTest(TestCase):
+    """Tests for current report status and update searching."""
+
+    def setUp(self):
+        """Create users and a report for progress status tests."""
+        self.report_owner = User.objects.create_user(
+            username="statusowner",
+            password="testpassword123",
+        )
+
+        self.update_owner = User.objects.create_user(
+            username="statusupdater",
+            password="testpassword123",
+        )
+
+        self.report = TreeReport.objects.create(
+            owner=self.report_owner,
+            location="Status Test Woodland",
+            description="Tree used for status history testing.",
+            status="reported",
+        )
+
+        self.client.login(
+            username="statusupdater",
+            password="testpassword123",
+        )
+
+    def test_new_update_changes_current_report_status(self):
+        """Test a new update becomes the report's current status."""
+        self.client.post(
+            f"/reports/{self.report.pk}/update/",
+            {
+                "notes": "Tree is now being monitored.",
+                "status": "monitoring",
+            },
+        )
+
+        self.report.refresh_from_db()
+
+        self.assertEqual(self.report.status, "monitoring")
+
+    def test_latest_update_status_appears_in_filter(self):
+        """Test current update status makes report filterable."""
+        self.client.post(
+            f"/reports/{self.report.pk}/update/",
+            {
+                "notes": "Monitoring has started.",
+                "status": "monitoring",
+            },
+        )
+
+        response = self.client.get(
+            "/reports/",
+            {"status": "monitoring"},
+        )
+
+        self.assertContains(response, "Status Test Woodland")
+
+    def test_search_finds_progress_update_notes(self):
+        """Test search includes notes from progress updates."""
+        self.client.post(
+            f"/reports/{self.report.pk}/update/",
+            {
+                "notes": "Distinctive canopy inspection completed.",
+                "status": "monitoring",
+            },
+        )
+
+        response = self.client.get(
+            "/reports/",
+            {"search": "canopy inspection"},
+        )
+
+        self.assertContains(response, "Status Test Woodland")
+
+    def test_editing_latest_update_changes_current_status(self):
+        """Test editing the newest update changes current status."""
+        first_update = ProgressUpdate.objects.create(
+            owner=self.update_owner,
+            tree_report=self.report,
+            notes="First historical update.",
+            status="action_needed",
+        )
+
+        latest_update = ProgressUpdate.objects.create(
+            owner=self.update_owner,
+            tree_report=self.report,
+            notes="Latest monitoring update.",
+            status="monitoring",
+        )
+
+        self.report.status = latest_update.status
+        self.report.save(update_fields=["status"])
+
+        self.client.post(
+            f"/updates/{latest_update.pk}/edit/",
+            {
+                "notes": "Tree is now protected.",
+                "status": "protected",
+            },
+        )
+
+        self.report.refresh_from_db()
+
+        self.assertEqual(self.report.status, "protected")
+        self.assertEqual(first_update.status, "action_needed")
+
+    def test_editing_older_update_does_not_change_current_status(self):
+        """Test historical edits do not overwrite current status."""
+        older_update = ProgressUpdate.objects.create(
+            owner=self.update_owner,
+            tree_report=self.report,
+            notes="Older update.",
+            status="action_needed",
+        )
+
+        latest_update = ProgressUpdate.objects.create(
+            owner=self.update_owner,
+            tree_report=self.report,
+            notes="Latest update.",
+            status="monitoring",
+        )
+
+        self.report.status = latest_update.status
+        self.report.save(update_fields=["status"])
+
+        self.client.post(
+            f"/updates/{older_update.pk}/edit/",
+            {
+                "notes": "Edited historical update.",
+                "status": "protected",
+            },
+        )
+
+        self.report.refresh_from_db()
+
+        self.assertEqual(self.report.status, "monitoring")
+
+    def test_deleting_latest_update_restores_previous_status(self):
+        """Test deleting newest update restores prior status."""
+        previous_update = ProgressUpdate.objects.create(
+            owner=self.update_owner,
+            tree_report=self.report,
+            notes="Action was required.",
+            status="action_needed",
+        )
+
+        latest_update = ProgressUpdate.objects.create(
+            owner=self.update_owner,
+            tree_report=self.report,
+            notes="Monitoring began.",
+            status="monitoring",
+        )
+
+        self.report.status = latest_update.status
+        self.report.save(update_fields=["status"])
+
+        self.client.post(
+            f"/updates/{latest_update.pk}/delete/",
+        )
+
+        self.report.refresh_from_db()
+
+        self.assertEqual(
+            self.report.status,
+            previous_update.status,
+        )
+
+    def test_deleting_only_update_restores_reported_status(self):
+        """Test deleting the only update restores Reported."""
+        update = ProgressUpdate.objects.create(
+            owner=self.update_owner,
+            tree_report=self.report,
+            notes="Temporary monitoring update.",
+            status="monitoring",
+        )
+
+        self.report.status = update.status
+        self.report.save(update_fields=["status"])
+
+        self.client.post(
+            f"/updates/{update.pk}/delete/",
+        )
+
+        self.report.refresh_from_db()
+
+        self.assertEqual(self.report.status, "reported")

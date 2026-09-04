@@ -39,7 +39,11 @@ def report_tree(request):
             report = form.save(commit=False)
             report.owner = request.user
             report.save()
-            messages.success(request, "Tree report submitted successfully.")
+
+            messages.success(
+                request,
+                "Tree report submitted successfully.",
+            )
             return redirect("home")
 
     else:
@@ -53,7 +57,12 @@ def report_tree(request):
 
 
 def report_list(request):
-    """Display, search and filter submitted tree reports."""
+    """
+    Display, search and filter submitted tree reports.
+
+    Search includes the original report location and description,
+    together with notes from related progress updates.
+    """
     reports = TreeReport.objects.order_by("-date_reported")
 
     search_query = request.GET.get("search", "").strip()
@@ -63,7 +72,8 @@ def report_list(request):
         reports = reports.filter(
             Q(location__icontains=search_query)
             | Q(description__icontains=search_query)
-        )
+            | Q(progress_updates__notes__icontains=search_query)
+        ).distinct()
 
     if status_filter:
         reports = reports.filter(status=status_filter)
@@ -112,7 +122,11 @@ def report_edit(request, pk):
 
         if form.is_valid():
             form.save()
-            messages.success(request, "Tree report updated successfully.")
+
+            messages.success(
+                request,
+                "Tree report updated successfully.",
+            )
             return redirect("report_detail", pk=report.pk)
 
     else:
@@ -142,7 +156,11 @@ def report_delete(request, pk):
 
     if request.method == "POST":
         report.delete()
-        messages.success(request, "Tree report deleted successfully.")
+
+        messages.success(
+            request,
+            "Tree report deleted successfully.",
+        )
         return redirect("report_list")
 
     return render(
@@ -154,7 +172,9 @@ def report_delete(request, pk):
 
 @login_required
 def progress_update_create(request, pk):
-    """Add a progress update to an existing tree report."""
+    """
+    Add a progress update and synchronise the report's current status.
+    """
     report = get_object_or_404(TreeReport, pk=pk)
 
     if request.method == "POST":
@@ -166,7 +186,13 @@ def progress_update_create(request, pk):
             update.owner = request.user
             update.save()
 
-            messages.success(request, "Progress update added successfully.")
+            report.status = update.status
+            report.save(update_fields=["status"])
+
+            messages.success(
+                request,
+                "Progress update added successfully.",
+            )
             return redirect("report_detail", pk=report.pk)
 
     else:
@@ -184,7 +210,12 @@ def progress_update_create(request, pk):
 
 @login_required
 def progress_update_edit(request, pk):
-    """Edit an existing progress update."""
+    """
+    Edit a progress update.
+
+    The report's current status is changed only when the edited
+    progress update is the most recent update for that report.
+    """
     update = get_object_or_404(ProgressUpdate, pk=pk)
 
     if update.owner != request.user:
@@ -205,14 +236,25 @@ def progress_update_edit(request, pk):
         )
 
         if form.is_valid():
-            form.save()
+            updated_progress = form.save()
+            report = updated_progress.tree_report
+
+            latest_update = report.progress_updates.order_by(
+                "-date_added",
+                "-pk",
+            ).first()
+
+            if latest_update and latest_update.pk == updated_progress.pk:
+                report.status = updated_progress.status
+                report.save(update_fields=["status"])
+
             messages.success(
                 request,
                 "Progress update edited successfully.",
             )
             return redirect(
                 "report_detail",
-                pk=update.tree_report.pk,
+                pk=report.pk,
             )
 
     else:
@@ -230,7 +272,10 @@ def progress_update_edit(request, pk):
 
 @login_required
 def progress_update_delete(request, pk):
-    """Delete an existing progress update."""
+    """
+    Delete a progress update and restore the previous current status
+    when the latest update is removed.
+    """
     update = get_object_or_404(ProgressUpdate, pk=pk)
 
     if update.owner != request.user:
@@ -243,10 +288,35 @@ def progress_update_delete(request, pk):
             pk=update.tree_report.pk,
         )
 
-    report_pk = update.tree_report.pk
+    report = update.tree_report
+    report_pk = report.pk
 
     if request.method == "POST":
+        latest_update = report.progress_updates.order_by(
+            "-date_added",
+            "-pk",
+        ).first()
+
+        deleting_latest = (
+            latest_update is not None
+            and latest_update.pk == update.pk
+        )
+
         update.delete()
+
+        if deleting_latest:
+            previous_update = report.progress_updates.order_by(
+                "-date_added",
+                "-pk",
+            ).first()
+
+            if previous_update:
+                report.status = previous_update.status
+            else:
+                report.status = "reported"
+
+            report.save(update_fields=["status"])
+
         messages.success(
             request,
             "Progress update deleted successfully.",
@@ -270,6 +340,7 @@ def register(request):
 
         if form.is_valid():
             form.save()
+
             messages.success(
                 request,
                 "Account created successfully. You can now log in.",
