@@ -405,25 +405,6 @@ class ProgressUpdatePermissionTest(TestCase):
 
         self.assertEqual(update.owner, self.other_user)
 
-    def test_new_progress_update_changes_report_status(self):
-        """Test a new update synchronises the report status."""
-        self.client.login(
-            username="updateother",
-            password="testpassword123",
-        )
-
-        self.client.post(
-            f"/reports/{self.report.pk}/update/",
-            {
-                "notes": "Status synchronisation test.",
-                "status": "protected",
-            },
-        )
-
-        self.report.refresh_from_db()
-
-        self.assertEqual(self.report.status, "protected")
-
     def test_owner_can_edit_progress_update(self):
         """Test the update owner can edit their update."""
         self.client.login(
@@ -446,25 +427,6 @@ class ProgressUpdatePermissionTest(TestCase):
             self.update.notes,
             "Edited progress update.",
         )
-
-    def test_editing_progress_update_changes_report_status(self):
-        """Test editing an update synchronises the report status."""
-        self.client.login(
-            username="updateowner",
-            password="testpassword123",
-        )
-
-        self.client.post(
-            f"/updates/{self.update.pk}/edit/",
-            {
-                "notes": "Updated status test.",
-                "status": "protected",
-            },
-        )
-
-        self.report.refresh_from_db()
-
-        self.assertEqual(self.report.status, "protected")
 
     def test_other_user_cannot_edit_progress_update(self):
         """Test another user cannot edit someone else's update."""

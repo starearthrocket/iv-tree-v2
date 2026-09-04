@@ -166,9 +166,6 @@ def progress_update_create(request, pk):
             update.owner = request.user
             update.save()
 
-            report.status = update.status
-            report.save(update_fields=["status"])
-
             messages.success(request, "Progress update added successfully.")
             return redirect("report_detail", pk=report.pk)
 
@@ -208,12 +205,7 @@ def progress_update_edit(request, pk):
         )
 
         if form.is_valid():
-            updated_progress = form.save()
-
-            report = updated_progress.tree_report
-            report.status = updated_progress.status
-            report.save(update_fields=["status"])
-
+            form.save()
             messages.success(
                 request,
                 "Progress update edited successfully.",
