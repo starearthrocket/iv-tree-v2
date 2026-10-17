@@ -1577,3 +1577,53 @@ The deployed application can be viewed at:
 The source repository is available at:
 
 [https://github.com/starearthrocket/iv-tree-v2](https://github.com/starearthrocket/iv-tree-v2)
+# Assessor Feedback Remediation
+
+Following assessor feedback, the production deployment and security configuration were reviewed and retested on **17 October 2026**.
+
+## Live Deployment Restoration
+
+The PythonAnywhere deployment was restored by correcting the web application's source-code path to the deployed `iv-tree-v2` project directory. After the web application was reloaded, the live I-V Tree application loaded successfully with its styling, static assets and uploaded media.
+
+![Restored live deployment - 17 October 2026](readme-images/project3-resubmission-live-2026-10-17.png)
+
+## Production Workflow Retesting
+
+The deployed application was manually retested after restoration. Navigation, registration and login, report creation, viewing, searching, filtering, editing and deletion were confirmed to work correctly. Progress Update functionality, styling, static assets and uploaded media were also checked on the deployed application.
+
+## Secret-Key Remediation
+
+A historical Django secret had previously appeared in Git history. The production secret was rotated on **17 October 2026** and the replacement value is stored outside the Git repository in the PythonAnywhere production configuration.
+
+Secret values are not included in the repository, README or testing evidence.
+
+The current settings configuration prevents production from silently using a development-only fallback key. When `DEBUG=False`, a `SECRET_KEY` environment value is required for the application to start.
+
+This was tested locally by deliberately starting the application in production mode without a `SECRET_KEY`. The application correctly refused to start with a missing-key error.
+
+Historical shared Git history has **not** been rewritten. Any history-remediation action will only be taken following assessor guidance.
+
+## Production Security and 404 Verification
+
+Production explicitly uses `DEBUG=False`.
+
+An unknown URL was tested on the live PythonAnywhere application after deployment. The application returned the custom branded I-V Tree 404 page without displaying a Django traceback, settings information or other development debugging information.
+
+![Production 404 verification - 17 October 2026](readme-images/project3-resubmission-404-2026-10-17.png)
+
+## Post-Remediation Regression Testing
+
+After the security settings were updated, the complete automated Django test suite was rerun:
+
+- **44 tests found**
+- **44 tests passed**
+- **Django system check: 0 issues**
+
+The production application was then updated from GitHub and reloaded successfully on PythonAnywhere.
+
+The documented deployment procedure includes:
+
+```bash
+python manage.py collectstatic --noinput
+
+```
